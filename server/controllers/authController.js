@@ -7,23 +7,21 @@ router.post('/signup', async (req, res) => {
     try {
         const user = await User.findOne({email: req.body.email});
         if (user) {
-            return res.send({
+            return res.status(400).send({
                 message: 'User already exists',
                 success: false
             })    
         }
         
         const hashedPassword = await bcrypt.hash(req.body.password, 10);
+        req.body.password = hashedPassword;
         const newUser =  new User(req.body);
 
         await newUser.save();
-        res.send({
+        res.status(201).send({
             message: 'User created successfully',
             success: true
         })
-
-
-
     } catch (error) {
         res.send({
             message: error.message,
@@ -37,14 +35,14 @@ router.post('/login', async (req, res) => {
     try {
         const user = await User.findOne({email: req.body.email});
         if (!user) {
-            return res.send({
+            return res.status(400).send({
                 message: 'User does not exists',
                 success: false
             })    
         }
         const isvalid  = bcrypt.compare(req?.body?.password, user?.password);
         if (!isvalid) { 
-            return res.send({
+            return res.status(400).send({
                 message: 'Invalid password',
                 success: false
             })
