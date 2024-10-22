@@ -50,4 +50,25 @@ router.post('/new-message', authMiddleware, async (req, res) => {
 });
 
 
+router.get('/get-all-messages/:chatId', authMiddleware, async (req, res) => {
+    try {
+        //Filtering Messages based on ChatID since each message belons to chat ID;
+        //But question is, from where will we get the chatId.
+        // we will get chatId from route parameters from request.
+        //Fiter based on chatId and 
+        const allMessages = await Message.find({chatId: req.params.chatId}).sort({createdAt: 1});
+
+        res.send({
+            message: 'Messages fetched successfully',
+            success: true,
+            data: allMessages
+        });
+    } catch (err) {
+        res.status(400).send({
+            message: err.message,
+            success: false
+        })
+    }
+});
+
 module.exports = router;
