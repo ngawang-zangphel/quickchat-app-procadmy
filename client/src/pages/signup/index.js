@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { signupUser } from './../../apiCalls/auth';
 
 function SignUp() {
 
@@ -12,10 +13,20 @@ function SignUp() {
         password: ''
     });
 
-    function onFormSubmit(event) {
-        event.preventDefault();
+    async function onFormSubmit(event) {
         // TODO: Send user data to server for registration
-        console.log(user);
+        event.preventDefault();
+        try {
+            const response = await signupUser(user);
+            //we will get success true or false from BE
+            if (response.success) {
+                alert(response.message);
+            } else {
+                alert(response.message);
+            }
+        } catch (err) {
+            alert(err.message);
+        }
     }
     
 
