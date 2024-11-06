@@ -28,7 +28,6 @@ function SignUp() {
             alert(err.message);
         }
     }
-    
 
     return(
         <div className="container">
