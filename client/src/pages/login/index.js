@@ -1,5 +1,6 @@
 import React from 'react';
 import {Link} from 'react-router-dom';
+import { loginuser } from '../../apiCalls/auth';
 
 function Login() {
 
@@ -8,10 +9,22 @@ function Login() {
         password: ''
     });
 
-    function onFormSubmit(event) {
+    async function onFormSubmit(event) {
         event.preventDefault();
         // TODO: Send user data to server for registration
-        console.log(user);
+        try{
+            const response  = await loginuser(user);
+            if (response?.success) {
+                console.log(response)
+                alert(response?.message);
+                localStorage.setItem('token', response?.token);
+                // window.location.href = '/';
+            } else {
+                alert(response?.message);
+            }
+        } catch (error) {
+            alert(error.message);
+        }
     };
 
     return (
