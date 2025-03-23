@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { signupUser } from './../../apiCalls/auth';
+import { toast } from "react-hot-toast";
 
 function SignUp() {
 
@@ -20,12 +21,12 @@ function SignUp() {
             const response = await signupUser(user);
             //we will get success true or false from BE
             if (response.success) {
-                alert(response.message);
+                toast.success(response.message);
             } else {
-                alert(response.message);
+                toast.error(response.message);
             }
         } catch (err) {
-            alert(err.message);
+            toast.error(err.message);
         }
     }
 

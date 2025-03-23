@@ -10,7 +10,7 @@ router.post('/signup', async (req, res) => {
 
         //2. If user exist, send an error response 
         if (user) {
-            return res.status(400).send({
+            return res.send({
                 message: 'User already exists',
                 success: false
             })    
@@ -31,7 +31,7 @@ router.post('/signup', async (req, res) => {
         await newUser.save();
 
         //6. Return the response.
-        res.status(201).send({
+        res.send({
             message: 'User created successfully',
             success: true
         })
@@ -53,7 +53,7 @@ router.post('/login', async (req, res) => {
         // 2. when we send, first we need to check if that email is present in Database or not.
         const user = await User.findOne({ email: req.body.email }).select('+password');
         if (!user) {
-            return res.status(400).send({
+            return res.send({
                 message: 'User does not exists',
                 success: false
             })    
@@ -69,7 +69,7 @@ router.post('/login', async (req, res) => {
         const isvalid = await bcrypt.compare(req.body.password, user.password);
         console.log(req.body);
         if (!isvalid) { 
-            return res.status(400).send({
+            return res.send({
                 message: 'Invalid password',
                 success: false
             })
@@ -85,7 +85,7 @@ router.post('/login', async (req, res) => {
         })
 
     } catch (error) {
-        res.statusCode(400).send({
+        res.send({
             message: error.message,
             success: false
         })
