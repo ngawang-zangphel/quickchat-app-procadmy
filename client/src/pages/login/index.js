@@ -18,7 +18,7 @@ function Login() {
                 console.log(response)
                 alert(response?.message);
                 localStorage.setItem('token', response?.token);
-                // window.location.href = '/';
+                window.location.href = '/';
             } else {
                 alert(response?.message);
             }
