@@ -38,7 +38,7 @@ function ProtectedRoute({children}) {
             dispatch(hideLoader());
             
             if (response.success) {
-                dispatch(setAllUsers(response?.setAllUsers));
+                dispatch(setAllUsers(response?.user));
             } else {
                 toast.error(response.message)
                 navigate('./login');

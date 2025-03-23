@@ -1,5 +1,6 @@
 import Search from "./search";
 import { useState } from "react";
+import UserList from "./userList";
 
 
 function Sidebar() {
@@ -14,6 +15,9 @@ function Sidebar() {
                 setSearchKey={setSearchKey}
             ></Search>
             {/* USER LIST */}
+            <UserList
+                searchKey={searchKey}
+            ></UserList> 
         </div>
     )
 }
