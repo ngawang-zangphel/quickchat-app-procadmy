@@ -1,10 +1,14 @@
 import React from 'react';
+import Header from './components/header';
 
 function Home() {
     return (
-        <div>
-            <h2>This is a Home page</h2>
-            <p>This is paragraph</p>
+        <div className='home-page'>
+            <Header></Header>
+            <div className='main-content'>
+                {/* SIDEBAR LAYOUT */}
+                {/* CHAT AREA */}
+            </div>
         </div>
     )
 }

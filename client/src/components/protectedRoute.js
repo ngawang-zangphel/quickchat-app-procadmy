@@ -1,14 +1,17 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getLoggedUser } from "../apiCalls/users";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { hideLoader, showLoader } from "../redux/loaderSlice";
+import { toast } from "react-hot-toast";
+import { setUser } from "../redux/userSlice";
 
 function ProtectedRoute({children}) {
 
+    const { user } = useSelector(state => state.usersReducer);
+
     const dispatch = useDispatch();
 
-    const [user, setUser] = useState(null);
     const navigate = useNavigate();
     const getLoggedInUser = async () => {
         try {
@@ -17,8 +20,9 @@ function ProtectedRoute({children}) {
             dispatch(hideLoader());
             
             if (response.success) {
-                setUser(response?.user);
+                dispatch(setUser(response?.user));
             } else {
+                toast.error(response.message)
                 navigate('./login');
             }
         } catch(error) {
@@ -41,10 +45,6 @@ function ProtectedRoute({children}) {
 
     // If not navigating then this children where in this case "home" component will be rendered
     return (<div>
-        <p> Name: { user?.firstname + ' ' + user?.lastname }</p>
-        <p>Email: { user?.email }</p>
-        <br/>
-        <br/>
         { children }
     </div>);
 }
