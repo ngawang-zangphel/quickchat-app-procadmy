@@ -8,7 +8,7 @@ module.exports  = (req, res, next) => {
         req.body.userId = decodedToken.userId;
         next();
 
-    } catch (err) {
+    } catch (error) {
         res.send({
             message: error.message,
             success: false
