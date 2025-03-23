@@ -37,7 +37,7 @@ function ProtectedRoute({children}) {
         } else {
             navigate('/login');
         }
-    });
+    }, []);
 
     // If not navigating then this children where in this case "home" component will be rendered
     return (<div>
