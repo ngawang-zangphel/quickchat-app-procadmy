@@ -1,10 +1,10 @@
-import {createSlict} from "@reduxjs/toolkit";
+import {createSlice} from "@reduxjs/toolkit";
 
-const loaderSlice = createSlict({
+const loaderSlice = createSlice({
     //StateName
     name: 'loader',
     //Initial value
-    initialState: false,
+    initialState: {loader: false},
     //Action using which we can update the state
     reducers: {
         //whenever showLoader is called, it will update that loader action value to true

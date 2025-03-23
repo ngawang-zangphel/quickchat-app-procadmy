@@ -1,22 +1,28 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getLoggedUser } from "../apiCalls/users";
+import { useDispatch } from "react-redux";
+import { hideLoader, showLoader } from "../redux/loaderSlice";
 
 function ProtectedRoute({children}) {
 
+    const dispatch = useDispatch();
+
     const [user, setUser] = useState(null);
-
     const navigate = useNavigate();
-
     const getLoggedInUser = async () => {
         try {
+            dispatch(showLoader());
             const response = await getLoggedUser();
+            dispatch(hideLoader());
+            
             if (response.success) {
                 setUser(response?.user);
             } else {
                 navigate('./login');
             }
         } catch(error) {
+            dispatch(hideLoader());
             navigate('./login');
         }
     };

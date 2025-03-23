@@ -2,8 +2,12 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { signupUser } from './../../apiCalls/auth';
 import { toast } from "react-hot-toast";
+import { hideLoader, showLoader } from "../../redux/loaderSlice";
+import { useDispatch } from "react-redux";
 
 function SignUp() {
+
+    const dispatch = useDispatch();
 
     //setUser is a state update function that will assign value to user
     //initial value for user.
@@ -18,7 +22,10 @@ function SignUp() {
         // TODO: Send user data to server for registration
         event.preventDefault();
         try {
+            //Call that action function
+            dispatch(showLoader());
             const response = await signupUser(user);
+            dispatch(hideLoader());
             //we will get success true or false from BE
             if (response.success) {
                 toast.success(response.message);
@@ -26,6 +33,7 @@ function SignUp() {
                 toast.error(response.message);
             }
         } catch (err) {
+            dispatch(hideLoader());
             toast.error(err.message);
         }
     }

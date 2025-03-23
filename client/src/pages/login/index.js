@@ -2,8 +2,12 @@ import React from 'react';
 import {Link} from 'react-router-dom';
 import { loginuser } from '../../apiCalls/auth';
 import { toast } from "react-hot-toast";
+import { useDispatch } from "react-redux";
+import { hideLoader, showLoader } from "../../redux/loaderSlice";
 
 function Login() {
+
+    const dispatch = useDispatch();
 
     const [user, setUser] = React.useState({
         email: '',
@@ -14,7 +18,11 @@ function Login() {
         event.preventDefault();
         // TODO: Send user data to server for registration
         try{
+            
+            //Call that action function
+            dispatch(showLoader());
             const response  = await loginuser(user);
+            dispatch(hideLoader());
             if (response?.success) {
                 console.log(response)
                 toast.success(response?.message);
@@ -24,6 +32,7 @@ function Login() {
                 toast.error(response?.message);
             }
         } catch (error) {
+            dispatch(hideLoader());
             toast.error(error.message);
         }
     };
