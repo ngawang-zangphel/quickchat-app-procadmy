@@ -1,10 +1,36 @@
 import React from 'react';
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { toast } from "react-hot-toast";
+import { createNewChat } from "../../../apiCalls/chat";
+import { hideLoader, showLoader } from "../../../redux/loaderSlice";
+import { setAllChats } from "../../../redux/userSlice";
 
 function UserList({ searchKey }) {
 
     //In All Chats, you get all the chats of that current user.
-    const { allUsers, allChats } = useSelector(state => state.usersReducer);
+    //user state: provide alias name
+    const { allUsers, allChats, user: currentUser } = useSelector(state => state.usersReducer);
+
+    const dispatch = useDispatch();
+
+    const startNewChat = async (searchedUserId) => {
+        try {
+            dispatch(showLoader());
+            const response = await createNewChat([currentUser._id, searchedUserId]);
+            dispatch(hideLoader());
+
+            if (response.success) {
+                toast.success(response.message);
+                const newChat = response.data;
+                const updatedChat = [...allChats, newChat];
+                dispatch(setAllChats(updatedChat));
+            }
+        } catch (error) {
+            toast.error(error.message);
+            dispatch(hideLoader());
+        }   
+    }
+
 
     return (
         allUsers
@@ -35,7 +61,9 @@ function UserList({ searchKey }) {
                             {
                                 !allChats.find(chat => chat.members.includes(user._id)) &&
                                 <div className='user-start-chat'>
-                                    <button className='user-start-chat-btn'>Start Chat</button>
+                                    <button className='user-start-chat-btn'
+                                        onClick={() => startNewChat(user._id)}
+                                    >Start Chat</button>
                                 </div>
                             }
 
