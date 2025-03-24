@@ -3,13 +3,16 @@ import { useSelector } from "react-redux";
 
 function UserList({ searchKey }) {
 
-    const { allUsers } = useSelector(state => state.usersReducer);
+    //In All Chats, you get all the chats of that current user.
+    const { allUsers, allChats } = useSelector(state => state.usersReducer);
 
     return (
         allUsers
         ?.filter(user => {
-            return (user.firstname.toLowerCase().includes(searchKey.toLowerCase()) || 
-            user.lastname.toLowerCase().includes(searchKey.toLowerCase()))&& searchKey;
+            //SearchedUser and User with chat messages
+            return (
+                (user.firstname.toLowerCase().includes(searchKey.toLowerCase()) || 
+                user.lastname.toLowerCase().includes(searchKey.toLowerCase()))&& searchKey) || (allChats.some(chat => chat.members.includes(user._id))) ;
         })
         ?.map(user => {
             return (
@@ -29,9 +32,13 @@ function UserList({ searchKey }) {
                                 <div className='user-display-email'>{ user.email }
                                 </div>
                             </div>
-                            <div className='user-start-chat'>
-                                <button className='user-start-chat-btn'>Start Chat</button>
-                            </div>
+                            {
+                                !allChats.find(chat => chat.members.includes(user._id)) &&
+                                <div className='user-start-chat'>
+                                    <button className='user-start-chat-btn'>Start Chat</button>
+                                </div>
+                            }
+
                         </div>
                     </div>
                 </div>

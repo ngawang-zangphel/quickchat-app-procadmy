@@ -24,7 +24,6 @@ function Login() {
             const response  = await loginuser(user);
             dispatch(hideLoader());
             if (response?.success) {
-                console.log(response)
                 toast.success(response?.message);
                 localStorage.setItem('token', response?.token);
                 window.location.href = '/';
