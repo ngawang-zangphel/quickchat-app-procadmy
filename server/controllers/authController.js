@@ -64,10 +64,7 @@ router.post('/login', async (req, res) => {
         // and since we receive the plain password in request body, we need to compare in such a way 
         // that we can compare plain password and encrypted password and check if they match.
         // for that we can use bcrypt package and use compare method of it.
-        console.log(req.body);
-        console.log(user);
         const isvalid = await bcrypt.compare(req.body.password, user.password);
-        console.log(req.body);
         if (!isvalid) { 
             return res.send({
                 message: 'Invalid password',

@@ -11,14 +11,14 @@ router.post('/create-new-chat', authMiddleware, async (req, res) => {
 
         res.status(201).send({
             message: "Chat created successfully",
-            succcess: true,
+            success: true,
             data: savedChat
         });
 
     }catch (err) {
         res.status(404).send({
             message: err.message,
-            succcess: false
+            success: false
         })
     }
 });
@@ -32,14 +32,14 @@ router.get('/get-all-chats', authMiddleware, async (req, res) => {
 
         res.status(200).send({
             message: "Chat Fetched successfully",
-            succcess: true,
+            success: true,
             data: allChats
         });
 
     }catch (err) {
         res.status(404).send({
             message: err.message,
-            succcess: false
+            success: false
         })
     }
 });
