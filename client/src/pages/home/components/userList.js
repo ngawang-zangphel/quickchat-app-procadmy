@@ -9,7 +9,7 @@ function UserList({ searchKey }) {
 
     //In All Chats, you get all the chats of that current user.
     //user state: provide alias name
-    const { allUsers, allChats, user: currentUser } = useSelector(state => state.usersReducer);
+    const { allUsers, allChats, user: currentUser, selectedChat } = useSelector(state => state.usersReducer);
 
     const dispatch = useDispatch();
 
@@ -34,11 +34,19 @@ function UserList({ searchKey }) {
 
     const openChat = (selectedUserId) => {
         const chat = allChats.find( chat => 
-            chat.members.includes(currentUser._id) && chat.members.includes(selectedUserId)
+            chat.members.map(member => member._id).includes(currentUser._id) && 
+            chat.members.map(member => member._id).includes(selectedUserId)
         );
         if (chat) {
             dispatch(setSelectedChat(chat));
         }
+    }
+
+    const IsSelectedChat = (user) =>  {
+        if (selectedChat) {
+            return selectedChat.members.map(m => m._id).includes(user._id);
+        };
+        return false;
     }
 
 
@@ -48,15 +56,15 @@ function UserList({ searchKey }) {
             //SearchedUser and User with chat messages
             return (
                 (user.firstname.toLowerCase().includes(searchKey.toLowerCase()) || 
-                user.lastname.toLowerCase().includes(searchKey.toLowerCase())) && searchKey) || (allChats.some(chat => chat.members.includes(user._id))) ;
+                user.lastname.toLowerCase().includes(searchKey.toLowerCase())) && searchKey) || (allChats.some(chat => chat.members.map(member => member._id).includes(user._id))) ;
         })
         ?.map(user => {
             return (
                 <div className='user-search-filter' onClick={() => openChat(user._id)} key={user._id}>
-                    <div className='filtered-user'>
+                    <div className={IsSelectedChat(user) ? "selected-user" : "filtered-user" }>
                         <div className='filter-user-display'>
                             {user.profilePic && <img src={UserList.profilePic} alt='Profile Pic' class="user-profile-image"></img> }
-                        { !user.profilePic && <div className='user-default-avatar'>
+                        { !user.profilePic && <div className={IsSelectedChat(user) ? "user-selected-avatar" :  'user-default-avatar'}>
                                 { 
                                 user.firstname.charAt(0).toUpperCase() + 
                                 user.lastname.charAt(0).toUpperCase() }
@@ -69,7 +77,7 @@ function UserList({ searchKey }) {
                                 </div>
                             </div>
                             {
-                                !allChats.find(chat => chat.members.includes(user._id)) &&
+                                !allChats.find(chat => chat.members.map(member => member._id).includes(user._id)) &&
                                 <div className='user-start-chat'>
                                     <button className='user-start-chat-btn'
                                         onClick={() => startNewChat(user._id)}

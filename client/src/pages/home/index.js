@@ -2,8 +2,12 @@ import React from 'react';
 import Header from './components/header';
 import Sidebar from './components/sidebar';
 import ChatArea from './components/chat';
+import { useSelector } from 'react-redux';
 
 function Home() {
+
+    const { selectedChat } = useSelector(state => state.usersReducer);
+
     return (
         <div className='home-page'>
             <Header></Header>
@@ -11,7 +15,7 @@ function Home() {
                 {/* SIDEBAR LAYOUT */}
                 <Sidebar></Sidebar>
                 {/* CHAT AREA */}
-                <ChatArea></ChatArea>
+                { selectedChat && <ChatArea></ChatArea>}
             </div>
         </div>
     )
