@@ -1,6 +1,7 @@
 import React from 'react';
 import Header from './components/header';
 import Sidebar from './components/sidebar';
+import ChatArea from './components/chat';
 
 function Home() {
     return (
@@ -10,6 +11,7 @@ function Home() {
                 {/* SIDEBAR LAYOUT */}
                 <Sidebar></Sidebar>
                 {/* CHAT AREA */}
+                <ChatArea></ChatArea>
             </div>
         </div>
     )

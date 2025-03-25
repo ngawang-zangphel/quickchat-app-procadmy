@@ -7,16 +7,18 @@ const usersSlice = createSlice({
     initialState: { 
         user: null, 
         allUsers: [],
-        allChats: []
+        allChats: [],
+        selectedChat: null
     },
     //reducers using which we can update the state using the value from action.payload
     reducers: {
         setUser: (state, action) => { state.user = action.payload; },
         setAllUsers: (state, action) => { state.allUsers = action.payload; },
-        setAllChats: (state, action) => { state.allChats = action.payload; }
+        setAllChats: (state, action) => { state.allChats = action.payload; },
+        setSelectedChat: (state, action) => { state.selectedChat = action.payload; }
     }
 });
 
-export const { setUser, setAllUsers, setAllChats } = usersSlice.actions;
+export const { setUser, setAllUsers, setAllChats, setSelectedChat } = usersSlice.actions;
 
 export default usersSlice.reducer;

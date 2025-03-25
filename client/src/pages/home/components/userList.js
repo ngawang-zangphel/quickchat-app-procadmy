@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-hot-toast";
 import { createNewChat } from "../../../apiCalls/chat";
 import { hideLoader, showLoader } from "../../../redux/loaderSlice";
-import { setAllChats } from "../../../redux/userSlice";
+import { setAllChats, setSelectedChat } from "../../../redux/userSlice";
 
 function UserList({ searchKey }) {
 
@@ -24,11 +24,21 @@ function UserList({ searchKey }) {
                 const newChat = response.data;
                 const updatedChat = [...allChats, newChat];
                 dispatch(setAllChats(updatedChat));
+                dispatch(setSelectedChat(newChat));
             }
         } catch (error) {
             toast.error(error.message);
             dispatch(hideLoader());
         }   
+    }
+
+    const openChat = (selectedUserId) => {
+        const chat = allChats.find( chat => 
+            chat.members.includes(currentUser._id) && chat.members.includes(selectedUserId)
+        );
+        if (chat) {
+            dispatch(setSelectedChat(chat));
+        }
     }
 
 
@@ -38,11 +48,11 @@ function UserList({ searchKey }) {
             //SearchedUser and User with chat messages
             return (
                 (user.firstname.toLowerCase().includes(searchKey.toLowerCase()) || 
-                user.lastname.toLowerCase().includes(searchKey.toLowerCase()))&& searchKey) || (allChats.some(chat => chat.members.includes(user._id))) ;
+                user.lastname.toLowerCase().includes(searchKey.toLowerCase())) && searchKey) || (allChats.some(chat => chat.members.includes(user._id))) ;
         })
         ?.map(user => {
             return (
-                <div className='user-search-filter'>
+                <div className='user-search-filter' onClick={() => openChat(user._id)} key={user._id}>
                     <div className='filtered-user'>
                         <div className='filter-user-display'>
                             {user.profilePic && <img src={UserList.profilePic} alt='Profile Pic' class="user-profile-image"></img> }
