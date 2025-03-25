@@ -28,7 +28,9 @@ router.get('/get-all-chats', authMiddleware, async (req, res) => {
     try {
         //$in: check if current logged in user id
         //Anny chat whose members Id contains userID of the currently logged in user
-        const allChats = await Chat.find({members: {$in: req?.body?.userId}});
+        //Populate: in the data base we will simply store Ids but in response, we get full user details
+        //.sort({updatedAt: -1}): whenever a new message will come for a given chat, that chat will go at the top
+        const allChats = await Chat.find({members: {$in: req?.body?.userId}}).populate('members').sort({updatedAt: -1});
 
         res.status(200).send({
             message: "Chat Fetched successfully",
