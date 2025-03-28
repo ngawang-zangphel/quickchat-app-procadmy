@@ -4,6 +4,7 @@ import { toast } from "react-hot-toast";
 import { createNewChat } from "../../../apiCalls/chat";
 import { hideLoader, showLoader } from "../../../redux/loaderSlice";
 import { setAllChats, setSelectedChat } from "../../../redux/userSlice";
+import moment from "moment";
 
 function UserList({ searchKey }) {
 
@@ -49,6 +50,30 @@ function UserList({ searchKey }) {
         return false;
     }
 
+    const isLastMessageTimeStamp = (userId) => {
+        const chat = allChats.find(chat => chat.members.map(m => m._id).includes(userId));
+        if (!chat && chat?.lastMessage) {
+            return "";
+        } else {
+            return moment(chat?.lastMessage?.createdAt).format('hh:mm A');
+        }
+    }
+
+    const getLastMessage = ( userId ) => {
+        const chat = allChats.find(chat => chat.members.map(m => m._id).includes(userId));
+        if (!chat) {
+            return "";
+        } else {
+            const msgPrefix = chat?.lastMessage?.sender === currentUser._id ? "You: " : "";
+            return msgPrefix + chat?.lastMessage?.text?.substring(0, 25);
+        }
+    } 
+
+    function formatName(user) {
+        let fname = user?.firstname.at(0).toUpperCase() + user?.firstname.slice(1).toLowerCase();
+        let lname = user?.lastname.at(0).toUpperCase() + user?.lastname.slice(1).toLowerCase();
+        return fname + ' ' + lname;
+    }
 
     return (
         allUsers
@@ -71,10 +96,13 @@ function UserList({ searchKey }) {
                             </div>}
                             <div className='filter-user-details'>
                                 <div className='user-display-name'>
-                                    { user.firstname + ' ' + user.lastname }
+                                    { formatName(user) }
                                 </div>
-                                <div className='user-display-email'>{ user.email }
+                                <div className='user-display-email'>{!getLastMessage(user._id) || user.email }
                                 </div>
+                            </div>
+                            <div className='last-message-timestamp'>
+                                { isLastMessageTimeStamp(user._id) }
                             </div>
                             {
                                 !allChats.find(chat => chat.members.map(member => member._id).includes(user._id)) &&
