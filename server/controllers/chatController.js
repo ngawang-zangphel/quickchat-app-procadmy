@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const Chat = require('./../models/chat');
-const authMiddleware = require('./../middlewares/authMiddleware')
+const authMiddleware = require('./../middlewares/authMiddleware');
+const Message = require('./../models/message');
 
 //Post route
 router.post('/create-new-chat', authMiddleware, async (req, res) => {
@@ -48,5 +49,46 @@ router.get('/get-all-chats', authMiddleware, async (req, res) => {
         })
     }
 });
+
+//Unread Messages to Read Messages
+router.post('/clear-unread-message', authMiddleware, async (req, res) => {
+    try {
+        const chatId = req.body.chatId
+        //We want to update the unread message count in chat collection
+        const chat = await Chat.findById(chatId);
+        if (!chat) {
+            res.send({
+                message: "No Chat found with the given chat ID",
+                success: false
+            });
+        }
+
+        //Three parameters to findByIdAndUpdate
+        //filter parameter: how do we want to find the chats (in this cse, based on the chatID)
+        //property we want to update: in this case unread message count 
+        //new (optional): when set to true then return the updated the chat document 
+        const updatedChat = await Chat.findByIdAndUpdate(
+            chatId, 
+            { unreadMessageCount: 0 },
+            { new: true }
+        ).populate('members').populate('lastMessage');
+
+        //We want to update the read property to true in message collection
+        //1st param: filter
+        //2nd param: property
+        await Message.updateMany({chatId: chatId, read: false}, {read: true});
+        res.send({
+            message: "Unread message cleared successfully",
+            success: true,
+            data: updatedChat
+        })
+
+    } catch (error) {
+        res.send({
+            message: error.message,
+            success: false
+        })
+    }
+})
 
 module.exports = router;
