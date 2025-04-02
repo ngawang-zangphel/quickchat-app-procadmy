@@ -52,7 +52,7 @@ function UserList({ searchKey }) {
 
     const isLastMessageTimeStamp = (userId) => {
         const chat = allChats.find(chat => chat.members.map(m => m._id).includes(userId));
-        if (!chat && chat?.lastMessage) {
+        if (!chat || !chat?.lastMessage) {
             return "";
         } else {
             return moment(chat?.lastMessage?.createdAt).format('hh:mm A');
@@ -61,7 +61,7 @@ function UserList({ searchKey }) {
 
     const getLastMessage = ( userId ) => {
         const chat = allChats.find(chat => chat.members.map(m => m._id).includes(userId));
-        if (!chat) {
+        if (!chat || !chat?.lastMessage) {
             return "";
         } else {
             const msgPrefix = chat?.lastMessage?.sender === currentUser._id ? "You: " : "";
@@ -98,7 +98,7 @@ function UserList({ searchKey }) {
                                 <div className='user-display-name'>
                                     { formatName(user) }
                                 </div>
-                                <div className='user-display-email'>{!getLastMessage(user._id) || user.email }
+                                <div className='user-display-email'>{getLastMessage(user._id) || user.email }
                                 </div>
                             </div>
                             <div className='last-message-timestamp'>
