@@ -10,7 +10,7 @@ function Home() {
     const { selectedChat } = useSelector(state => state.usersReducer);
 
     //Url where our server is running
-    const socket = io('http://localhost:5000');
+    const socket = io('http://localhost:4500');
 
     return (
         <div className='home-page'>
