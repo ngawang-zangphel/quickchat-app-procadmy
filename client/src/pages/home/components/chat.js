@@ -90,7 +90,7 @@ function ChatArea() {
 
     useEffect(() => {
         getMessages();
-        if (selectedChat.lastMessage.sender !== user._id) {
+        if (selectedChat?.lastMessage?.sender !== user._id) {
             clearUnreadMessages();
         }
     }, [selectedChat]);
@@ -113,7 +113,10 @@ function ChatArea() {
                                 </div>
                                 <div className="messafe-timestamp" style={isCurrentUserSender ? 
                                     { float: 'right'}: { float: 'left' }}>
-                                    { formatTime(msg.createdAt) }
+                                    { formatTime(msg.createdAt) } {
+                                        isCurrentUserSender && msg.read && 
+                                        <i className="fa fa-check-circle" aria-hidden="true" style={{color: '#e74c3c'}} > </i>
+                                    }
                                 </div>
                             </div>
                         </div>
