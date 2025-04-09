@@ -26,7 +26,7 @@ const server = require('http').createServer(app);
 */
 const io = require('socket.io')(server, {
     cors: {
-        origin: 'http://localhost:3000',
+        origin: 'http://localhost:4500',
         methods: ['GET', 'POST']
     }
 });
@@ -38,7 +38,14 @@ app.use('/api/message', messageRouter);
 
 // TEST SOCKET CONNECTION FROM CLIENT
 io.on('connection', socket => {
-    console.log('COnnect with Socket ID: ' + socket.id);
+    //listen to an event using on method
+    //event name, evtnt data
+    socket.on('send-message-all', data => {
+        console.log(data);
+        //data.text since data received from client is { text: 'Hi from User' }
+        socket.emit('send-message-by-server', "Message from server: " + data.text);
+
+    });
 }) 
 
 module.exports = server;

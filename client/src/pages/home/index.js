@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Header from './components/header';
 import Sidebar from './components/sidebar';
 import ChatArea from './components/chat';
@@ -10,7 +10,16 @@ function Home() {
     const { selectedChat } = useSelector(state => state.usersReducer);
 
     //Url where our server is running
-    const socket = io('http://localhost:4500');
+    const socket = io('http://localhost:3000');
+
+    useEffect(() => {
+        //First param: event name (our choice)
+        //Second Param: Data Message
+        socket.emit('send-message-all', { text: 'Hi from User' });
+        socket.on('send-message-by-server', data => {
+            console.log(data);
+        })
+    }, []);
 
     return (
         <div className='home-page'>
