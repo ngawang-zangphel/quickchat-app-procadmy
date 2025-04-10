@@ -38,15 +38,10 @@ app.use('/api/message', messageRouter);
 
 // TEST SOCKET CONNECTION FROM CLIENT
 io.on('connection', socket => {
-    socket.on('join-room', userid => {
-        socket.join(userid);
-        console.log("User Joined: " + userid);
-    });
+    socket.on('join-room', userid => { socket.join(userid); });
 
-    socket.on('send-message', (data) => {
-        //to method: sending to specific client
-        //Send userId (as in socket.join) to which we want to send the data
-        socket.to(data?.recipent).emit('receive-message', data?.text);
+    socket.on('send-message', (message) => {
+        io.to(message.members[0]).to(message.members[1]).emit('receive-message', message)
     });
 }) 
 

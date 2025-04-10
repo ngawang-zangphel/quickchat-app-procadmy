@@ -5,8 +5,9 @@ import { toast } from "react-hot-toast";
 import { useEffect, useState } from "react";
 import moment from "moment";
 import { clearUnreadMessageCount } from '../../../apiCalls/chat';
+import store from './../../../redux/store';
 
-function ChatArea() {
+function ChatArea({ socket }) {
 
     const dispatch = useDispatch();
     const { selectedChat, user, allChats } = useSelector(state => state.usersReducer);
@@ -21,12 +22,20 @@ function ChatArea() {
                 sender: user._id,
                 text: message
             };
-            dispatch(showLoader());
+
+            //Event Data: data we send here should match the message document in our collection
+            socket.emit('send-message', {
+                ...newMessage, 
+                members: selectedChat.members.map(m => m._id),
+                read: false,
+                createdAt: moment().format('DD-MM-YYYY hh:mm:ss')
+            });
+
             const response  = await createNewMessage(newMessage);
-            dispatch(hideLoader());
             if (response.success) {
                 setMessage('');
             }
+
         } catch (error) {
             dispatch(hideLoader());
             toast.error(error.message);
@@ -92,15 +101,32 @@ function ChatArea() {
         getMessages();
         if (selectedChat?.lastMessage?.sender !== user._id) {
             clearUnreadMessages();
-        }
+        };
+
+        //listen to message
+        //off(): Remove any event listener of the same name
+        socket.off('receive-message').on('receive-message', (data) => {
+            //Set this all if the selectedChat id is equal to received one
+            const selectedChat = store.getState().usersReducer.selectedChat;
+            if (selectedChat._id === data.chatId) {            
+                //Thats why the data structure should match
+                setAllMessages(prevmsg => [...prevmsg, data]);
+            }
+        })
     }, [selectedChat]);
+
+    //Automatically move the scroll to bottom to see latest message
+    useEffect(() => {
+        const msgContainer = document.getElementById('main-chat-area');
+        msgContainer.scrollTop = msgContainer.scrollHeight;
+    }, [allMessgaes])
 
     return <> {selectedChat && 
         <div className="app-chat-area">
             <div className="app-chat-area-header">
                 { formatName(selectedUser) }
             </div>
-            <div className="main-chat-area">
+            <div className="main-chat-area" id="main-chat-area">
                 {
                     allMessgaes.map(msg => {
                         const isCurrentUserSender = msg.sender === user._id;
