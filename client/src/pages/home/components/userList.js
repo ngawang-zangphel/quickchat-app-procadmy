@@ -7,7 +7,6 @@ import { setAllChats, setSelectedChat } from "../../../redux/userSlice";
 import moment from "moment";
 
 function UserList({ searchKey }) {
-
     //In All Chats, you get all the chats of that current user.
     //user state: provide alias name
     const { allUsers, allChats, user: currentUser, selectedChat } = useSelector(state => state.usersReducer);
@@ -89,7 +88,7 @@ function UserList({ searchKey }) {
         if (searchKey === "") {
             return allChats;
         } else {
-            allUsers.filter(user => {
+            return allUsers.filter(user => {
                 return user.firstname.toLowerCase().includes(searchKey.toLowerCase()) || 
                 user.lastname.toLowerCase().includes(searchKey.toLowerCase());
             })
@@ -101,7 +100,7 @@ function UserList({ searchKey }) {
             let user = obj;
             //if it contains members array means it is of chat object else it is users object
             if (obj.members) {
-                user = obj.members.find(mem => mem._id !== currentUser?._id)
+                user = obj.members.find(mem => mem._id !== currentUser?._id);
             };
             return (
                 <div className='user-search-filter' onClick={() => openChat(user._id)} key={user._id}>
