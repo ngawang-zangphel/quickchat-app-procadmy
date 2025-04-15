@@ -28,7 +28,7 @@ function ChatArea({ socket }) {
                 ...newMessage, 
                 members: selectedChat.members.map(m => m._id),
                 read: false,
-                createdAt: moment().format('DD-MM-YYYY hh:mm:ss')
+                createdAt: moment().format('YYYY-MM-DD hh:mm:ss')
             });
 
             const response  = await createNewMessage(newMessage);
@@ -106,7 +106,7 @@ function ChatArea({ socket }) {
         //listen to message
         //off(): Remove any event listener of the same name
         socket.off('receive-message').on('receive-message', (data) => {
-            //Set this all if the selectedChat id is equal to received one
+            //Set this all if the selectedChat id is equal to received one 
             const selectedChat = store.getState().usersReducer.selectedChat;
             if (selectedChat._id === data.chatId) {            
                 //Thats why the data structure should match
@@ -119,7 +119,7 @@ function ChatArea({ socket }) {
     useEffect(() => {
         const msgContainer = document.getElementById('main-chat-area');
         msgContainer.scrollTop = msgContainer.scrollHeight;
-    }, [allMessgaes])
+    }, [allMessgaes]);
 
     return <> {selectedChat && 
         <div className="app-chat-area">
