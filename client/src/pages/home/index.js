@@ -25,7 +25,7 @@ function Home() {
             <Header></Header>
             <div className='main-content'>
                 {/* SIDEBAR LAYOUT */}
-                <Sidebar></Sidebar>
+                <Sidebar socket={socket}></Sidebar>
                 {/* CHAT AREA */}
                 { selectedChat && <ChatArea socket={socket}></ChatArea>}
             </div>

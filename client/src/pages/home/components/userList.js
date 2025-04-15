@@ -1,12 +1,13 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-hot-toast";
 import { createNewChat } from "../../../apiCalls/chat";
 import { hideLoader, showLoader } from "../../../redux/loaderSlice";
 import { setAllChats, setSelectedChat } from "../../../redux/userSlice";
 import moment from "moment";
+import store from '../../../redux/store';
 
-function UserList({ searchKey }) {
+function UserList({ searchKey, socket }) {
     //In All Chats, you get all the chats of that current user.
     //user state: provide alias name
     const { allUsers, allChats, user: currentUser, selectedChat } = useSelector(state => state.usersReducer);
@@ -94,6 +95,31 @@ function UserList({ searchKey }) {
             })
         }
     }
+
+    //Load once only
+    useEffect(() => {
+        socket.on('receive-message', (message) => {
+            const selectedChat = store.getState().usersReducer.selectedChat;
+            const allChats = store.getState().usersReducer.allChats;
+
+            //If selectedChatId is not equal to the received chat data
+            if (selectedChat?._id !== message?.chatId) {
+                //update the allChats array with the new message
+                const updatedChats = allChats.map(chat => {
+                    if (chat?._id === message.chatId) {
+                        return {
+                            ...chat,
+                            unreadMessageCount: (chat?.unreadMessageCount || 0) + 1,
+                            lastMessage: message
+                        }
+                    };
+                    return chat;
+                });
+                dispatch(setAllChats(updatedChats));
+            }
+
+        })
+    }, []);
 
     return (
         getData()?.map(obj => {
