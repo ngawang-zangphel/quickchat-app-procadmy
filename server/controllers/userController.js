@@ -1,6 +1,8 @@
 const router = require('express').Router();
 const User = require('./../models/user');
 const authMiddleware = require('../middlewares/authMiddleware');
+const  cloudinary = require('./../cloudinary');
+const user = require('./../models/user');
 
 //get Details.
 //normal
@@ -40,6 +42,33 @@ router.get('/get-all-users', authMiddleware, async (req, res) => {
     } catch (err) {
         res.status(400).send({
             message: err.message,
+            success: false
+        })
+    }
+})
+
+router.post('/upload-profile-pic', authMiddleware, async (req, res) => {
+    try {
+        const image = req.body.image;
+
+        //UPLOAD THE IMAGE TO CLOUDINARY
+        const uploadedImage = await cloudinary.uploader?.upload(image, { folder: 'quick-chat' });
+
+        //UPDATE THE USER MODEL & SET THE PROFILE PIC PROPERTY
+        const user = await User.findByIdAndUpdate(
+            {_id: req.body.userId },
+            { profilePic: uploadedImage.secure_url },
+            { new: true }
+        );
+
+        res.send({
+            message: 'Profile pic uploaded successfully',
+            success: true,
+            data: user
+        })
+    } catch (error) {
+        res.send({
+            message: error.message,
             success: false
         })
     }
