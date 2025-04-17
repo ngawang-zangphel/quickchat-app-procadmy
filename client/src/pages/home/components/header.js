@@ -1,13 +1,12 @@
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
-function Header() {
+function Header({ socket }) {
     
     const { user } = useSelector(state => state.usersReducer);
 
     const navigate = useNavigate();
 
-    
     function getFullName() {
         let fname = user?.firstname.toUpperCase();
         let lname = user?.lastname.toUpperCase();
@@ -20,6 +19,12 @@ function Header() {
         return f + ' ' + l;
     }
 
+    const logout = () => {
+        localStorage.removeItem('token');
+        socket.emit('user-offline', user?._id);
+        navigate('/login');
+    }
+
     return (
         <div className="app-header">
             <div className="app-logo">
@@ -27,7 +32,6 @@ function Header() {
                 Quick Chat
             </div>
             <div className="app-user-profile">
-                <div className="logged-user-name">{ getFullName() }</div>
                 {
                     user?.profilePic && <img 
                         src={user?.profilePic}
@@ -41,7 +45,12 @@ function Header() {
                     onClick={() => navigate('./profile') }
                     >{ getInitials() }</div>
                 }
-
+                <div className="logged-user-name">{ getFullName() }</div>
+                <button className="logout-button"
+                    onClick={logout}
+                >
+                    <i className="fa fa-power-off"></i>
+                </button>
             </div>
         </div>
     )

@@ -69,6 +69,11 @@ io.on('connection', socket => {
         }
         //all the clients.
         socket.emit('online-users', onlineUser);
+    });
+    
+    socket.on('user-offline', userId => {
+        onlineUser.splice(onlineUser.indexOf(userId), 1);
+        io.emit('online-users-updated', onlineUser);
     })
 }) 
 

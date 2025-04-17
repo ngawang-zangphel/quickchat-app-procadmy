@@ -24,13 +24,16 @@ function Home() {
             //Online User: Step 4
             socket.on('online-users', onlineusers => {
                 setOnlineUser(onlineusers);
+            });
+            socket.on('online-users-updated', updatedOnlineUser => {
+                setOnlineUser(updatedOnlineUser);
             })
         }
     }, [user]);
 
     return (
         <div className='home-page'>
-            <Header></Header>
+            <Header socket={socket}></Header>
             <div className='main-content'>
                 {/* SIDEBAR LAYOUT */}
                 <Sidebar socket={socket} onlineUser={onlineUser}></Sidebar>
