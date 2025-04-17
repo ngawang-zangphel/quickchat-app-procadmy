@@ -7,6 +7,7 @@ import moment from "moment";
 import { clearUnreadMessageCount } from '../../../apiCalls/chat';
 import store from './../../../redux/store';
 import { setAllChats } from "../../../redux/userSlice";
+import EmojiPicker from "emoji-picker-react";
 
 function ChatArea({ socket }) {
 
@@ -16,6 +17,7 @@ function ChatArea({ socket }) {
     const [message, setMessage] = useState('');
     const [allMessages, setAllMessages] = useState([]);
     const [isTyping, setIsTyping] = useState(false);
+    const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
     const sendMessage = async () => {
         try {
@@ -36,6 +38,7 @@ function ChatArea({ socket }) {
             const response  = await createNewMessage(newMessage);
             if (response.success) {
                 setMessage('');
+                setShowEmojiPicker(false);
             }
 
         } catch (error) {
@@ -196,6 +199,14 @@ function ChatArea({ socket }) {
                     { isTyping && <i>typing...</i> }
                 </div>
             </div>
+            {
+                showEmojiPicker &&
+                <div>
+                    <EmojiPicker
+                        onEmojiClick={(e) => {setMessage(message + e.emoji) }}
+                    ></EmojiPicker>
+                </div>
+            }
             <div className="send-message-div">
                     <input 
                         type="text" className="send-message-input" placeholder="Type a message" 
@@ -210,10 +221,13 @@ function ChatArea({ socket }) {
                         }}
                     />
                     <button 
+                        className="fa fa-smile-o send-emoji-btn" aria-hidden="true"
+                        onClick={ () => { setShowEmojiPicker(!showEmojiPicker) } }
+                    ></button>
+                    <button 
                         className="fa fa-paper-plane send-message-btn" aria-hidden="true"
                         onClick={ sendMessage }
-                    ></button>
-                
+                    ></button> 
             </div>
         </div>
     }</>;
