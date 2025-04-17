@@ -98,9 +98,10 @@ function UserList({ searchKey, socket }) {
 
     //Load once only
     useEffect(() => {
-        socket.on('receive-message', (message) => {
+        socket.off('receive-message').on('receive-message', (message) => {
+            console.log('hit', message)
             const selectedChat = store.getState().usersReducer.selectedChat;
-            const allChats = store.getState().usersReducer.allChats;
+            let allChats = store.getState().usersReducer.allChats;
 
             //If selectedChatId is not equal to the received chat data
             if (selectedChat?._id !== message?.chatId) {
@@ -115,10 +116,20 @@ function UserList({ searchKey, socket }) {
                     };
                     return chat;
                 });
-                dispatch(setAllChats(updatedChats));
+                allChats = updatedChats;
             }
 
-        })
+            //1. FIND THE LASTEST CHAT
+            const latestChat = allChats.find(chat => chat._id === message.chatId);
+
+            //2. GET ALL OTHER CHATS
+            const otherChats = allChats.filter(chat => chat._id !== message.chatId);
+
+            //3. CREATE A NEW ARRAY LATEST CHAT ON TOP AND THEN OTHER CHATS
+            allChats = [latestChat, ...otherChats];
+
+            dispatch(setAllChats(allChats));
+        });
     }, []);
 
     return (

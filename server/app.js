@@ -43,6 +43,12 @@ io.on('connection', socket => {
     socket.on('send-message', (message) => {
         io.to(message.members[0]).to(message.members[1]).emit('receive-message', message)
     });
+
+    socket.on('clear-unread-messages', (data) => {
+        io.to(data.members[0])
+        .to(data.members[1])
+        .emit('message-count-cleared', data)
+    });
 }) 
 
 module.exports = server;

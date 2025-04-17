@@ -6,19 +6,20 @@ import { useEffect, useState } from "react";
 import moment from "moment";
 import { clearUnreadMessageCount } from '../../../apiCalls/chat';
 import store from './../../../redux/store';
+import { setAllChats } from "../../../redux/userSlice";
 
 function ChatArea({ socket }) {
 
     const dispatch = useDispatch();
     const { selectedChat, user, allChats } = useSelector(state => state.usersReducer);
-    const selectedUser = selectedChat.members.find(u => u._id !== user._id);
+    const selectedUser = selectedChat.members.find(u => u?._id !== user?._id);
     const [message, setMessage] = useState('');
-    const [allMessgaes, setAllMessages] = useState([]);
+    const [allMessages, setAllMessages] = useState([]);
 
     const sendMessage = async () => {
         try {
             const newMessage = {
-                chatId: selectedChat._id,
+                chatId: selectedChat?._id,
                 sender: user._id,
                 text: message
             };
@@ -59,9 +60,11 @@ function ChatArea({ socket }) {
 
     const clearUnreadMessages = async () => {
         try {
-            dispatch(showLoader());
+            socket.emit('clear-unread-messages', {
+                chatId: selectedChat._id,
+                members: selectedChat.members.map(m => m._id)
+            });
             const response  = await clearUnreadMessageCount(selectedChat._id);
-            dispatch(hideLoader());
 
             if (response.success) {
                 allChats.map(chat => {
@@ -72,7 +75,6 @@ function ChatArea({ socket }) {
                 });
             }
         } catch (error) {
-            dispatch(hideLoader());
             toast.error(error.message);
         }
     }
@@ -105,21 +107,51 @@ function ChatArea({ socket }) {
 
         //listen to message
         //off(): Remove any event listener of the same name
-        socket.on('receive-message', (data) => {
+        socket.off('receive-message').on('receive-message', (message) => {
             //Set this all if the selectedChat id is equal to received one 
             const selectedChat = store.getState().usersReducer.selectedChat;
-            if (selectedChat._id === data.chatId) {            
+            if (selectedChat._id === message.chatId) {            
                 //Thats why the data structure should match
-                setAllMessages(prevmsg => [...prevmsg, data]);
+                setAllMessages(prevmsg => [...prevmsg, message]);
             }
-        })
+            //if sender of that message is not currently logged in user
+            if (selectedChat._id === message.chatId && message.sender !== user._id) {
+                clearUnreadMessages();
+            }
+        });
+
+        socket.on('message-count-cleared', (data) => {
+            const selectedChat = store.getState().usersReducer.selectedChat;
+            const allChats = store.getState().usersReducer.allChats;
+
+            if (selectedChat._id === data.chatId) {
+                //UPDATING UNREAD MESSAGE COUNT IN CHAT OBJECT
+                const updatedChats = allChats.map(chat => {
+                    if (chat._id === data.chatId) {
+                        return {
+                            ...chat, 
+                            unreadMessageCount: 0
+                        };
+                    };
+                    return chat;
+                });
+                dispatch(setAllChats(updatedChats));
+
+                //UPDATING READ PROPERTY IN MESSAGE OBJECT
+                setAllMessages(prevMsgs => {
+                    return prevMsgs.map(msg => {
+                        return { ...msg, read: true }
+                    })
+                })
+            }
+        });
     }, [selectedChat]);
 
     //Automatically move the scroll to bottom to see latest message
     useEffect(() => {
         const msgContainer = document.getElementById('main-chat-area');
         msgContainer.scrollTop = msgContainer.scrollHeight;
-    }, [allMessgaes]);
+    }, [allMessages]);
 
     return <> {selectedChat && 
         <div className="app-chat-area">
@@ -128,9 +160,11 @@ function ChatArea({ socket }) {
             </div>
             <div className="main-chat-area" id="main-chat-area">
                 {
-                    allMessgaes.map(msg => {
+                    allMessages.map((msg, index) => {
                         const isCurrentUserSender = msg.sender === user._id;
-                        return <div className="message-container" style={ isCurrentUserSender ? {
+                        return <div 
+                            key={index}
+                            className="message-container" style={ isCurrentUserSender ? {
                             justifyContent: "end"
                         }: {justifyContent: "start"}}>
                             <div>

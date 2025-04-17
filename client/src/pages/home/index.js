@@ -16,7 +16,7 @@ function Home() {
     useEffect(() => {
         if (user) {
             //First param: room name
-            socket.emit('join-room', user._id);   
+            socket.emit('join-room', user?._id);   
         }
     }, [user]);
 
