@@ -32,7 +32,7 @@ const server = require('http').createServer(app);
 */
 const io = require('socket.io')(server, {
     cors: {
-        origin: 'http://localhost:4500',
+        origin: 'https://quickchat-app-client.onrender.com',
         methods: ['GET', 'POST']
     }
 });
