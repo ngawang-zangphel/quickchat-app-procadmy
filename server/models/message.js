@@ -19,8 +19,12 @@ const messageSchema = new mongoose.Schema({
     //Message Sent
     text: {
         type: String,
-        //When sending, message should be present
-        required: true
+        //When sending, message should be optional now since they can send image
+        required: false
+    },
+    image: {
+        type: String,
+        required: false
     },
     read: {
         type: Boolean,
