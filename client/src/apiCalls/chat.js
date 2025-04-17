@@ -2,7 +2,7 @@ import { axiosInstance, url } from "./index";
 
 export const getAllChats = async () => {
     try {
-       const response = await axiosInstance.get(url + 'api/chat/get-all-chats');
+       const response = await axiosInstance.get(url + '/api/chat/get-all-chats');
        return response.data;
 
     } catch(error) {
@@ -14,7 +14,7 @@ export const getAllChats = async () => {
 // and the one that currently loggedIN user is going to start the chat
 export const createNewChat = async ( members ) => {
     try {
-       const response = await axiosInstance.post(url + 'api/chat/create-new-chat', 
+       const response = await axiosInstance.post(url + '/api/chat/create-new-chat', 
             {
                 members
             }
@@ -28,7 +28,7 @@ export const createNewChat = async ( members ) => {
 
 export const clearUnreadMessageCount = async ( chatId ) => {
     try {
-       const response = await axiosInstance.post(url + 'api/chat/clear-unread-message', 
+       const response = await axiosInstance.post(url + '/api/chat/clear-unread-message', 
             { chatId }
        );
        return response.data;
