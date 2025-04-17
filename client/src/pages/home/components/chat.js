@@ -107,7 +107,7 @@ function ChatArea({ socket }) {
 
         //listen to message
         //off(): Remove any event listener of the same name
-        socket.off('receive-message').on('receive-message', (message) => {
+        socket.on('receive-message', (message) => {
             //Set this all if the selectedChat id is equal to received one 
             const selectedChat = store.getState().usersReducer.selectedChat;
             if (selectedChat._id === message.chatId) {            
