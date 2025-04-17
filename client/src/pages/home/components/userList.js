@@ -7,7 +7,7 @@ import { setAllChats, setSelectedChat } from "../../../redux/userSlice";
 import moment from "moment";
 import store from '../../../redux/store';
 
-function UserList({ searchKey, socket }) {
+function UserList({ searchKey, socket, onlineUser }) {
     //In All Chats, you get all the chats of that current user.
     //user state: provide alias name
     const { allUsers, allChats, user: currentUser, selectedChat } = useSelector(state => state.usersReducer);
@@ -142,8 +142,18 @@ function UserList({ searchKey, socket }) {
                 <div className='user-search-filter' onClick={() => openChat(user._id)} key={user._id}>
                     <div className={IsSelectedChat(user) ? "selected-user" : "filtered-user" }>
                         <div className='filter-user-display'>
-                            {user.profilePic && <img src={UserList.profilePic} alt='Profile Pic' class="user-profile-image"></img> }
-                        { !user.profilePic && <div className={IsSelectedChat(user) ? "user-selected-avatar" :  'user-default-avatar'}>
+                            {user.profilePic && 
+                            <img 
+                                src={UserList.profilePic} 
+                                alt='Profile Pic' 
+                                className="user-profile-image" 
+                                style={ onlineUser.includes(user._id) ? { border: '#82e0aa 3px solid' } : {} }
+                            /> }
+                                { !user.profilePic && 
+                                    <div 
+                                        className={IsSelectedChat(user) ? "user-selected-avatar" :  'user-default-avatar'}
+                                        style={ onlineUser.includes(user._id) ? { border: '#82e0aa 3px solid' } : {} }
+                                    >
                                 { 
                                 user.firstname.charAt(0).toUpperCase() + 
                                 user.lastname.charAt(0).toUpperCase() }

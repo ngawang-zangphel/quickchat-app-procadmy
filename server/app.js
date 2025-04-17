@@ -36,6 +36,9 @@ app.use('/api/user', userRouter);
 app.use('/api/chat', chatRouter);
 app.use('/api/message', messageRouter);
 
+//Online User: Step 2.1
+const onlineUser = [];
+
 // TEST SOCKET CONNECTION FROM CLIENT
 io.on('connection', socket => {
     socket.on('join-room', userid => { socket.join(userid); });
@@ -54,6 +57,15 @@ io.on('connection', socket => {
         io.to(data.members[0])
         .to(data.members[1])
         .emit('started-typing', data)
+    });
+
+    //Online User: Step 2.2
+    socket.on('user-login', userid => {
+        if (!onlineUser.includes(userid)) {
+            onlineUser.push(userid);
+        }
+        //all the clients.
+        socket.emit('online-users', onlineUser);
     })
 }) 
 
