@@ -7,6 +7,7 @@ import { Toaster } from "react-hot-toast";
 import ProtectedRoute from "./components/protectedRoute";
 import Loader from "./components/loader";
 import { useSelector } from "react-redux";
+import Profile from "./pages/profile";
 
 function App() {
   
@@ -26,6 +27,13 @@ function App() {
                 <Home />
               </ProtectedRoute> 
             } 
+          />
+          <Route path="/profile" element={
+              <ProtectedRoute>
+                {/* Profile Component will be passed as children to this protected route component. */}
+                <Profile />
+              </ProtectedRoute> 
+            }  
           />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
