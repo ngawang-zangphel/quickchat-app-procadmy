@@ -28,9 +28,20 @@ function Header() {
             </div>
             <div className="app-user-profile">
                 <div className="logged-user-name">{ getFullName() }</div>
-                <div className="logged-user-profile-pic"
+                {
+                    user?.profilePic && <img 
+                        src={user?.profilePic}
+                        alt="profile-pic"
+                        onClick={() => navigate('./profile') }
+                        className="logged-user-profile-pic"
+                    />
+                }
+                {
+                    !user?.profilePic && <div className="logged-user-profile-pic"
                     onClick={() => navigate('./profile') }
-                >{ getInitials() }</div>
+                    >{ getInitials() }</div>
+                }
+
             </div>
         </div>
     )

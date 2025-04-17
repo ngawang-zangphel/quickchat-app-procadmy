@@ -144,7 +144,7 @@ function UserList({ searchKey, socket, onlineUser }) {
                         <div className='filter-user-display'>
                             {user.profilePic && 
                             <img 
-                                src={UserList.profilePic} 
+                                src={user.profilePic} 
                                 alt='Profile Pic' 
                                 className="user-profile-image" 
                                 style={ onlineUser.includes(user._id) ? { border: '#82e0aa 3px solid' } : {} }

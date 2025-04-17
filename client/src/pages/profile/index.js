@@ -1,11 +1,16 @@
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import moment from "moment";
 import { useEffect, useState } from "react";
+import { uploadProfilePic } from "../../apiCalls/users";
+import { hideLoader, showLoader } from '../../redux/loaderSlice';
+import { setUser } from '../../redux/userSlice';
+import { toast } from "react-hot-toast";
 
 function Profile() {
 
     const { user } = useSelector(state => state.usersReducer);
     const [image, setImage] = useState('');
+    const dispatch = useDispatch();
 
     function getInitials() {
         let f = user?.firstname.toUpperCase()?.[0];
@@ -31,6 +36,25 @@ function Profile() {
         reader.onloadend = async () => {
             setImage(reader.result);
         }
+    }
+
+    const updateProfilePic = async () => {
+       try {
+        dispatch(showLoader());
+        const response = await uploadProfilePic(image); 
+        dispatch(hideLoader());  
+
+        if (response.success) {
+            toast.success(response?.message);
+            dispatch(setUser(response.data));
+        } else {
+            toast.error(response.message);
+        }
+
+       } catch (error) {
+            toast.error(error.message)
+            dispatch(hideLoader());  
+       }
     }
 
     useEffect(() => {
@@ -64,6 +88,10 @@ function Profile() {
                         type="file"
                         onChange={onFileSelect}
                     />
+                    <button 
+                        className="upload-image-btn"
+                        onClick={updateProfilePic}
+                    >Upload</button>
                 </div>
             </div>
         </div> 
