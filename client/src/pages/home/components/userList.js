@@ -99,7 +99,6 @@ function UserList({ searchKey, socket }) {
     //Load once only
     useEffect(() => {
         socket.off('receive-message').on('receive-message', (message) => {
-            console.log('hit', message)
             const selectedChat = store.getState().usersReducer.selectedChat;
             let allChats = store.getState().usersReducer.allChats;
 
