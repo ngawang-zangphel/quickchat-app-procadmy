@@ -4,7 +4,10 @@ const authRouter = require('./controllers/authController');
 const userRouter = require('./controllers/userController');
 const chatRouter = require('./controllers/chatController');
 const messageRouter = require('./controllers/messageController');
+const cors = require('cors');
 
+//handle request from other domains
+app.use(cors());
 app.use(express.json({
     //Our Request Size
     limit: "50mb"
