@@ -7,7 +7,7 @@ import { io } from 'socket.io-client';
 
 //Making it global variable
 //Url where our server is running
-const socket = io('http://localhost:3000');
+const socket = io('https://quickchat-app-server-j9aj.onrender.com');
 
 function Home() {
 
