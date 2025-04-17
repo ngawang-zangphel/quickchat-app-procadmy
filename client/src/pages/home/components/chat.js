@@ -18,6 +18,7 @@ function ChatArea({ socket }) {
     const [allMessages, setAllMessages] = useState([]);
     const [isTyping, setIsTyping] = useState(false);
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+    const [data, setData] = useState(null);
 
     const sendMessage = async (image) => {
         try {
@@ -122,7 +123,7 @@ function ChatArea({ socket }) {
 
         //listen to message
         //off(): Remove any event listener of the same name
-        socket.on('receive-message', (message) => {
+        socket.off('receive-message').on('receive-message', (message) => {
             //Set this all if the selectedChat id is equal to received one 
             const selectedChat = store.getState().usersReducer.selectedChat;
             if (selectedChat._id === message.chatId) {            
@@ -162,6 +163,7 @@ function ChatArea({ socket }) {
         });
 
         socket.on('started-typing', (data) => {
+            setData(data);
             if (selectedChat?._id === data.chatId && data.sender !== user?._id) {
                 setIsTyping(true);
                 setTimeout(() => {
@@ -215,7 +217,7 @@ function ChatArea({ socket }) {
                     })
                 }
                 <div className="typing-indicator">
-                    { isTyping && <i>typing...</i> }
+                    { isTyping && selectedChat?.members.map(m => m?._id).includes(data?.sender) && <i>typing...</i> }
                 </div>
             </div>
             {

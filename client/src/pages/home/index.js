@@ -29,7 +29,7 @@ function Home() {
                 setOnlineUser(updatedOnlineUser);
             })
         }
-    }, [user]);
+    }, [user, onlineUser]);
 
     return (
         <div className='home-page'>

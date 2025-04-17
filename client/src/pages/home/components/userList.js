@@ -98,7 +98,7 @@ function UserList({ searchKey, socket, onlineUser }) {
 
     //Load once only
     useEffect(() => {
-        socket.off('receive-message').on('receive-message', (message) => {
+        socket.off('set-message-count').on('set-message-count', (message) => {
             const selectedChat = store.getState().usersReducer.selectedChat;
             let allChats = store.getState().usersReducer.allChats;
 

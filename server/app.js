@@ -47,7 +47,8 @@ io.on('connection', socket => {
     socket.on('join-room', userid => { socket.join(userid); });
 
     socket.on('send-message', (message) => {
-        io.to(message.members[0]).to(message.members[1]).emit('receive-message', message)
+        io.to(message.members[0]).to(message.members[1]).emit('receive-message', message);
+        io.to(message.members[0]).to(message.members[1]).emit('set-message-count', message)
     });
 
     socket.on('clear-unread-messages', (data) => {
